@@ -179,12 +179,10 @@ app.post('/predict-risk', async (req, res) => {
   }
 });
 
-const server = http.createServer(app);
-
-//Attach Socket.io to that server
+// Attach Socket.io to server with cloud-permissive CORS
 const io = new Server(server, {
   cors: {
-    origin: ALLOWED_ORIGINS,
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
   },
 });

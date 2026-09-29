@@ -1,0 +1,65 @@
+services:
+  # 1. Backend Orchestration Gateway (Node.js + Express)
+  - type: web
+    name: ertmac-nwis-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ML_PREDICT_URL
+        fromService:
+          type: web
+          name: ertmac-nwis-ml
+          property: host
+      - key: WELLMIND_URL
+        fromService:
+          type: web
+          name: ertmac-nwis-wellmind
+          property: host
+
+  # 2. Frontend Operations Workstation (React + Vite Static Site)
+  - type: web
+    name: ertmac-nwis-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: ertmac-nwis-backend
+          property: host
+      - key: VITE_SOCKET_URL
+        fromService:
+          type: web
+          name: ertmac-nwis-backend
+          property: host
+
+  # 3. ML Predictive Risk Service (FastAPI + XGBoost + SHAP)
+  - type: web
+    name: ertmac-nwis-ml
+    runtime: python
+    rootDir: ml-service
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+
+  # 4. WellMind Multi-Document RAG Service (FastAPI + OCR + PyMuPDF)
+  - type: web
+    name: ertmac-nwis-wellmind
+    runtime: python
+    rootDir: wellMind
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
