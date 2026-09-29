@@ -1,32 +1,26 @@
 import os
 import fitz
-from paddleocr import PaddleOCR
-
-# ocr = PaddleOCR(
-#     lang="en",
-#     use_doc_orientation_classify=False,
-#     use_doc_unwarping=False,
-#     use_textline_orientation=False,
-#     enable_mkldnn=False
-# )
 
 _ocr_instance = None
 
 def get_ocr():
     global _ocr_instance
     if _ocr_instance is None:
-        from paddleocr import PaddleOCR
-        _ocr_instance = PaddleOCR(
-            lang="en",
-            use_doc_orientation_classify=False,
-            use_doc_unwarping=False,
-            use_textline_orientation=False,
-            enable_mkldnn=False
-        )
-    return _ocr_instance
+        try:
+            from paddleocr import PaddleOCR
+            _ocr_instance = PaddleOCR(
+                lang="en",
+                use_doc_orientation_classify=False,
+                use_doc_unwarping=False,
+                use_textline_orientation=False,
+                enable_mkldnn=False
+            )
+        except Exception as e:
+            print(f"PaddleOCR not available, using PyMuPDF direct parser: {e}")
+            _ocr_instance = False
+    return _ocr_instance if _ocr_instance is not False else None
 
 def extract_text_from_pdf(pdf_path):
-
     if not os.path.exists(pdf_path):
         raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
@@ -44,32 +38,36 @@ def extract_text_from_pdf(pdf_path):
             })
             continue
 
-        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-        image_path = f"_ocr_page_{page_number}.png"
-        pix.save(image_path)
+        ocr_engine = get_ocr()
+        if ocr_engine is not None:
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+            image_path = f"_ocr_page_{page_number}.png"
+            pix.save(image_path)
 
-        # result = ocr.predict(image_path)
-        result=get_ocr().predict(image_path)
+            try:
+                result = ocr_engine.predict(image_path)
+                page_text = []
+                for res in result:
+                    if hasattr(res, "json"):
+                        data = res.json() if callable(res.json) else res.json
+                        if isinstance(data, dict):
+                            rec_texts = data.get("rec_texts", [])
+                            page_text.extend(rec_texts)
 
-        page_text = []
-
-        for res in result:
-            if hasattr(res, "json"):
-                data = res.json
-                if callable(data):
-                    data = data()
-
-                if isinstance(data, dict):
-                    rec_texts = data.get("rec_texts", [])
-                    page_text.extend(rec_texts)
-
-        pages_text.append({
-            "page": page_number,
-            "text": "\n".join(page_text),
-            "method": "PaddleOCR"
-        })
-
-        os.remove(image_path)
+                pages_text.append({
+                    "page": page_number,
+                    "text": "\n".join(page_text),
+                    "method": "PaddleOCR"
+                })
+            finally:
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+        else:
+            pages_text.append({
+                "page": page_number,
+                "text": "",
+                "method": "PyMuPDF"
+            })
     doc.close()
 
     return pages_text
