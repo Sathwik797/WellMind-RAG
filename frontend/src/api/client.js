@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const baseURL = rawUrl.replace(/\/+$/, "").endsWith("/api")
+  ? rawUrl.replace(/\/+$/, "")
+  : `${rawUrl.replace(/\/+$/, "")}/api`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL,
 });
 
 // Attach the JWT to every request except the three public auth routes.

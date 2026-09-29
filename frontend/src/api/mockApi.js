@@ -237,12 +237,17 @@ export async function getContributors(id) {
 }
 // ACCOUNT
 // GET /api/users/me
+const getApiBase = () => {
+  const raw = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+  return raw.endsWith("/api") ? raw : `${raw}/api`;
+};
+
 //   -> { name, employeeId, role, directorate, stats: { wellsCount, logsCount, yearsOfService } }
 export const getMyAccount = async () => {
   const token = localStorage.getItem("nwis-token");
 
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/account/me`,
+    `${getApiBase()}/account/me`,
     {
       method: "GET",
       headers: {
@@ -265,7 +270,7 @@ export const updateMyAccount = async (data) => {
   const token = localStorage.getItem("nwis-token");
 
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/account/me`,
+    `${getApiBase()}/account/me`,
     {
       method: "PUT",
       headers: {
