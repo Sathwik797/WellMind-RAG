@@ -6,8 +6,11 @@
 
 Smart India Hackathon 2026 · Problem Statement `SIH26121` · Oil India Limited
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render%20Cloud-00c7b7?style=for-the-badge&logo=render)](https://ertmac-nwis-frontend.onrender.com/)
 [![Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Sathwik797/WellMind-RAG.git)
-[![Workstation](https://img.shields.io/badge/System-eRTMAC--NWIS%202.0-0284c7?style=for-the-badge)](https://github.com/Sathwik797/WellMind-RAG.git)
+[![Workstation](https://img.shields.io/badge/System-eRTMAC--NWIS%202.0-0284c7?style=for-the-badge)](https://ertmac-nwis-frontend.onrender.com/)
+
+### 🚀 **[Click Here to Launch Live Application: ertmac-nwis-frontend.onrender.com](https://ertmac-nwis-frontend.onrender.com/)**
 
 | Problem Statement ID | Target Operator | Platform Architecture |
 |---|---|---|
