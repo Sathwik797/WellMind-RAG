@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const protect = require("../middleware/authMiddleware");
+const optionalAuth = require("../middleware/optionalAuth");
 const { requireFieldRole } = require("../middleware/requireFieldRole");
 
 const {
@@ -10,7 +11,7 @@ const {
 
 router.get(
   "/wells/:wellId/decision-logs",
-  protect,
+  optionalAuth,
   getDecisionLogsByWellId
 );
 

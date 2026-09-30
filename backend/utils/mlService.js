@@ -1,9 +1,25 @@
 const axios = require('axios');
 
-const ML_PREDICT_URL = process.env.ML_PREDICT_URL || 'http://localhost:8000/predict';
-console.log("ML_PREDICT_URL =", ML_PREDICT_URL);
-const ML_EXPLAIN_URL = process.env.ML_EXPLAIN_URL || 'http://localhost:8000/explain';
-const ML_HISTORICAL_URL = process.env.ML_HISTORICAL_URL || 'http://localhost:8000/historical-intelligence';
+function getMlBaseUrl() {
+  let url = String(process.env.ML_SERVICE_URL || process.env.ML_PREDICT_URL || 'http://localhost:8000').trim();
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  return url
+    .replace(/\/+$/, '')
+    .replace(/\/predict\/?$/, '')
+    .replace(/\/explain\/?$/, '')
+    .replace(/\/realtime-warning\/?$/, '')
+    .replace(/\/historical-intelligence\/?$/, '');
+}
+
+const ML_BASE = getMlBaseUrl();
+const ML_PREDICT_URL = `${ML_BASE}/predict`;
+const ML_EXPLAIN_URL = `${ML_BASE}/explain`;
+const ML_REALTIME_WARNING_URL = `${ML_BASE}/realtime-warning`;
+const ML_HISTORICAL_URL = `${ML_BASE}/historical-intelligence`;
+
+console.log("ML_BASE =", ML_BASE);
 
 const mlAxios = axios.create({ timeout: 240000 });
 const cleanPayload = (record) => {
@@ -113,4 +129,10 @@ const getHistoricalAnswer = async (question, wellIds) => {
 };
 
 
-module.exports = { getRiskPrediction, getRiskExplanation, getHistoricalAnswer};
+module.exports = {
+  getRiskPrediction,
+  getRiskExplanation,
+  getHistoricalAnswer,
+  ML_REALTIME_WARNING_URL,
+  ML_BASE,
+};

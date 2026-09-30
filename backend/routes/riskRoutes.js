@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { predictRiskForWell, explainRiskForWell,searchHistoricalDocuments,simulateScenario,getRiskTimeseries } = require('../controllers/riskController');
-const protect = require('../middleware/authMiddleware');
+const optionalAuth = require('../middleware/optionalAuth');
 
-router.get('/:wellId', protect, predictRiskForWell);
-router.get('/:wellId/explain', protect, explainRiskForWell);
-router.get('/:wellId/timeseries', protect, getRiskTimeseries);
-router.post('/historical-search', protect, searchHistoricalDocuments);
-router.post('/simulate', protect, simulateScenario);
+router.get('/:wellId', optionalAuth, predictRiskForWell);
+router.get('/:wellId/explain', optionalAuth, explainRiskForWell);
+router.get('/:wellId/timeseries', optionalAuth, getRiskTimeseries);
+router.post('/historical-search', optionalAuth, searchHistoricalDocuments);
+router.post('/simulate', optionalAuth, simulateScenario);
 
 module.exports = router;

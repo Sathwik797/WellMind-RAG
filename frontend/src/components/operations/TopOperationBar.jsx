@@ -90,9 +90,9 @@ export default function TopOperationBar({
         </div>
 
         {/* Live Stream Telemetry Indicator */}
-        <div className="ops-connection-badge" title={isLive ? "Telemetry stream active" : "Offline"}>
+        <div className="ops-connection-badge" title={isLive ? "Active telemetry simulation stream connected" : "Telemetry offline"}>
           <span className={`status-dot ${isLive ? "live" : "offline"}`} />
-          <span>{isLive ? "LIVE TELEMETRY" : "OFFLINE"}</span>
+          <span>{isLive ? "SIMULATED TELEMETRY" : "OFFLINE"}</span>
         </div>
       </div>
 

@@ -238,7 +238,11 @@ export async function getContributors(id) {
 // ACCOUNT
 // GET /api/users/me
 const getApiBase = () => {
-  const raw = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+  let raw = String(import.meta.env.VITE_API_URL || "http://localhost:5000").trim();
+  if (!raw.startsWith("http://") && !raw.startsWith("https://")) {
+    raw = `https://${raw}`;
+  }
+  raw = raw.replace(/\/+$/, "");
   return raw.endsWith("/api") ? raw : `${raw}/api`;
 };
 

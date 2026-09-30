@@ -87,7 +87,7 @@ export default function TelemetryPanel({ telemetry = {}, currentDepth = 2450.5 }
       <div className="telemetry-strip-header">
         <div className="tsh-title-group">
           <IconActivity size={13} />
-          <span>REAL-TIME DRILLING HYDRAULICS &amp; DYNAMICS</span>
+          <span>SIMULATED DRILLING HYDRAULICS &amp; DYNAMICS (RT-FEED)</span>
         </div>
         <div className="tsh-metric">
           BIT DEPTH: <strong>{telemetry.md ? Number(telemetry.md).toFixed(1) : Number(currentDepth).toFixed(1)}m</strong>

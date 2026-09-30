@@ -1,9 +1,7 @@
 const axios = require('axios');
 const Well = require('../models/Well');
 const DrillingData = require('../models/DrillingData');
-
-const ML_REALTIME_WARNING_URL =
-  process.env.ML_REALTIME_WARNING_URL || 'http://localhost:8000/realtime-warning';
+const { ML_REALTIME_WARNING_URL } = require('../utils/mlService');
 
 const cleanDrillingData = (record) => ({
   Well_ID: record.Well_ID,
@@ -32,8 +30,6 @@ const cleanDrillingData = (record) => ({
   Previous_Kick_Count: record.Previous_Kick_Count ?? 0,
   Previous_NPT_Count: record.Previous_NPT_Count ?? 0,
   Similar_Well_Risk_Count: record.Similar_Well_Risk_Count ?? 0,
-  Kick_Label: record.Kick_Label ?? 0,
-  Fishing_Label: record.Fishing_Label ?? 0,
 });
 
 const checkAndGenerateWarning = async (wellId) => {

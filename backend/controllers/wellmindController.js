@@ -37,17 +37,19 @@ exports.ask = async (req, res) => {
   //    console.error("WellMind error:", error.response?.data || error.message);
   //   res.status(500).json({ message: 'Error asking question', error: error.message });
   // }
-  }catch (error) {
-  console.error("❌ WellMind request failed:", {
-    message: error.message,
-    status: error.response?.status,
-    data: error.response?.data,
-    headers: error.response?.headers,
-    url: error.config?.url,
-  });
+  } catch (error) {
+    console.error("❌ WellMind request failed:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url,
+    });
 
-  throw error;
-}
+    return res.status(502).json({
+      message: "WellMind knowledge service is currently unavailable or timed out. Please try again.",
+      error: error.response?.data?.detail || error.message,
+    });
+  }
 };
 
 // @route GET /api/wellmind/documents

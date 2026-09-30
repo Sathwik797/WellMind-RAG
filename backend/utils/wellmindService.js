@@ -1,7 +1,15 @@
 const axios = require('axios');
 const FormData = require('form-data');
 
-const WELLMIND_BASE = process.env.WELLMIND_URL || 'http://localhost:8001';
+function getWellmindBaseUrl() {
+  let url = String(process.env.WELLMIND_URL || 'http://localhost:8001').trim();
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  return url.replace(/\/+$/, '');
+}
+
+const WELLMIND_BASE = getWellmindBaseUrl();
 const wellmindAxios = axios.create({ timeout: 320000 });
 
 async function uploadDocument(fileBuffer, originalFilename) {

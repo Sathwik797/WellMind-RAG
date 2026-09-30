@@ -10,6 +10,9 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       req.employee = await Employee.findById(decoded.id).select('-password');
+      if (!req.employee) {
+        return res.status(401).json({ message: 'User session expired or not found. Please log in again.' });
+      }
       next();
     } catch (error) {
       res.status(401).json({ message: 'Not authorized, token failed' });
