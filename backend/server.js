@@ -66,12 +66,18 @@ async function initMongoDB() {
   if (mongoUri && !mongoUri.includes("localhost:27017") && !mongoUri.includes("127.0.0.1:27017")) {
     try {
       console.log(`Connecting to configured MongoDB URI...`);
-      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 4000 });
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
       console.log('MongoDB connected successfully');
       await Well.createIndexes();
+      const count = await Well.countDocuments();
+      if (count === 0) {
+        console.log('Auto-populating database with wells, formations, events, and drilling data...');
+        await populateData();
+        console.log('Database ready with initial test data.');
+      }
       return;
     } catch (err) {
-      console.warn('Configured MONGO_URI failed, checking local options...');
+      console.warn('Configured MONGO_URI failed, checking local options...', err.message);
     }
   }
 
